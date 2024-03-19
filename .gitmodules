@@ -1,0 +1,3 @@
+[submodule "base91"]
+	path = thirdparty/base91
+	url = https://github.com/wecand0/base91

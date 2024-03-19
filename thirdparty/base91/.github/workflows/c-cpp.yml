@@ -1,0 +1,29 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    name: Build Base91 for Linux
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: install catch2
+      run: |
+        git clone https://github.com/catchorg/Catch2
+        cd Catch2
+        mkdir build
+        cd build
+        cmake ..
+        make -j$(nproc)
+        sudo make install
+    - name: build
+      run: |
+          cd cpp
+          cmake .
+          make -j$(nproc)
