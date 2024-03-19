@@ -1,3 +1,6 @@
 [submodule "base91"]
 	path = thirdparty/base91
 	url = https://github.com/wecand0/base91
+[submodule "thirdparty/spdlog"]
+	path = thirdparty/spdlog
+	url = https://github.com/gabime/spdlog.git

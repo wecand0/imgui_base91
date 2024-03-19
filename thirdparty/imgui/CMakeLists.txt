@@ -1,5 +1,7 @@
 project(imgui VERSION 1.90.4)
 
+set(CMAKE_CXX_STANDARD 17)
+
 set(_imgui_Sources
         imconfig.h
         imgui.cpp
