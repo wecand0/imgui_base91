@@ -2,5 +2,5 @@
 Imgui project for encoding/decoding base91, save to clipboard/file
 
 
-![1.png](..%2F..%2FPictures%2F1.png)
-![2.png](..%2F..%2FPictures%2F2.png)
+![Alt text](data/1.png?raw=true)
+![Alt text](data/2.png?raw=true)
