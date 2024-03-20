@@ -7,8 +7,10 @@
 class Logger {
 public:
     Logger() = default;
+
     void init();
-    [[nodiscard]] auto getInstance() const;
+
+    [[nodiscard]] std::shared_ptr<spdlog::async_logger> getInstance() const;
 
 private:
     std::shared_ptr<spdlog::async_logger> loggerInstance_;

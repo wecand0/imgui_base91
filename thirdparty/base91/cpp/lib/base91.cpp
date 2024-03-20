@@ -72,7 +72,7 @@ void Base91::decode(const std::string_view &data) {
     }
 
     data_.clear();
-    data_.reserve(compute_decoded_size());
+    //data_.reserve(compute_decoded_size());
 
     const uint8_t *ib = (uint8_t *) data.data();
     uint32_t queue{};

@@ -42,8 +42,13 @@ int main(int, char **) {
 #endif
     Window win;
 
+    const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+    auto window_width = mode->width;
+    auto window_height = mode->height;
+
     // Create window with graphics context
-    GLFWwindow *window = glfwCreateWindow(1280, 720, "ImGui_Base91", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(window_width / 2, window_height / 3, "ImGui_Base91", nullptr, nullptr);
     if (window == nullptr){
         return 1;
     }
@@ -58,8 +63,8 @@ int main(int, char **) {
 
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     // Setup Dear ImGui style
-    win.initImGuiSets();
-    win.initFont();
+    Window::initImGuiSets();
+    Window::initFont();
 
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);

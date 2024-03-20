@@ -2,10 +2,11 @@
 
 #include <fstream>
 
-
 Window::Window() {
     try {
-        logger_.init();
+        Logger logger;
+        logger.init();
+        logger_ = logger.getInstance();
     } catch (spdlog::spdlog_ex &ex) {
         printf("%s", "failed to init spdlog");
     }
@@ -13,11 +14,11 @@ Window::Window() {
     fileDialog_.SetTitle("Choose the file");
 }
 
-static void helpMarker(const char *desc) {
+static void helpMarker(const std::string &desc) {
     ImGui::TextDisabled("(?)");
     if (ImGui::BeginItemTooltip()) {
         ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-        ImGui::TextUnformatted(desc);
+        ImGui::TextUnformatted(desc.c_str());
         ImGui::PopTextWrapPos();
         ImGui::EndTooltip();
     }
@@ -29,7 +30,7 @@ void Window::draw() {
 
     auto mainWinSize = use_work_area ? viewport->WorkSize : viewport->Size;
     ImGui::SetNextWindowPos(use_work_area ? viewport->WorkPos : viewport->Pos);
-    ImGui::SetNextWindowSize({mainWinSize.x, mainWinSize.y / 2});
+    ImGui::SetNextWindowSize({mainWinSize.x, mainWinSize.y}); // /2
 
     static ImGuiWindowFlags flags =
             ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove |
@@ -43,12 +44,16 @@ void Window::draw() {
         ImGui::SeparatorText("File");
 
         ImGui::Text("Choose file");
-
         ImGui::SameLine();
+        helpMarker("The file will be saved in the same directory with the name that you have chosen.");
+
 
         if (!isEncoding_ && !isDecoding_) {
+            ImGui::BeginDisabled();
             if (ImGui::Button("Choose encoding/decoding")) {}
+            ImGui::EndDisabled();
         }
+
         if (isEncoding_) {
             if (ImGui::Button("Open file for encoding"))
                 fileDialog_.Open();
@@ -125,42 +130,8 @@ void Window::draw() {
 
         //TODO make async
         if (fileDialog_.HasSelected()) {
-            std::string data;
-            std::ifstream ifstream(fileDialog_.GetSelected().string());
-            if (ifstream.is_open()) {
-                std::string line;
-                while (std::getline(ifstream, line)) {
-                    data += line;
-                }
-                ifstream.close();
-                if(!data.empty()){
-                    if (isEncoding_) {
-                        try {
-                            base91.encode(inputText);
-                        } catch (const std::exception &e) {
-                            spdlog::error(e.what());
-                        }
-                    }
-                    if (isDecoding_) {
-                        try {
-                            base91.decode(inputText);
-                        } catch (const std::exception &e) {
-                            spdlog::error(e.what());
-                        }
-                    }
-                }
-            } else {
-                spdlog::error("Unable to open file");
-            }
-
-            std::string temp = fileDialog_.GetPwd();
-            temp += std::filesystem::path::preferred_separator;
-            temp += outputFileName;
-            std::ofstream ofstream(temp);
-            if (ofstream.is_open()) {
-                ofstream << base91.getData();
-                ofstream.close();
-            }
+            readFile(fileDialog_.GetSelected().string());
+            writeFile(outputFileName);
             fileDialog_.ClearSelected();
         }
     }
@@ -249,4 +220,46 @@ void Window::initFont() {
         fclose(fontFile);
     }
     io.Fonts->Build();
+}
+
+void Window::readFile(const std::string &_path) {
+    std::ifstream ifstream(fileDialog_.GetSelected().string(), std::ios::binary);
+    if (!ifstream.is_open()) {
+        spdlog::error("Unable to open file");
+        return;
+    }
+    std::string fileContents((std::istreambuf_iterator<char>(ifstream)),
+                             std::istreambuf_iterator<char>());
+    ifstream.close();
+    if (isEncoding_) {
+        try {
+            base91.encode(fileContents);
+        } catch (const std::exception &e) {
+            spdlog::error(e.what());
+        }
+    }
+    if (isDecoding_) {
+        try {
+            base91.decode(fileContents);
+        } catch (const std::exception &e) {
+            spdlog::error(e.what());
+        }
+    }
+
+}
+
+void Window::writeFile(const std::string &_outputFileName) {
+    std::string outputFilePath = fileDialog_.GetPwd();
+    outputFilePath += std::filesystem::path::preferred_separator;
+    outputFilePath += _outputFileName;
+
+    std::ofstream fileOutput(outputFilePath, std::ios::binary);
+    if (!fileOutput.is_open()) {
+        spdlog::error("{} {}", "Unable to open file: ");
+    }
+
+    fileOutput.write(base91.getData().c_str(), (std::streamsize) base91.getData().size());
+    fileOutput.close();
+    spdlog::info("{}", "File written successfully.");
+
 }

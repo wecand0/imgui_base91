@@ -3,7 +3,7 @@
 
 #include <imgui_common.h>
 
-#include "../thirdparty/base91/cpp/lib/base91.h"
+#include <base91.h>
 #include "logger.h"
 
 class Window {
@@ -16,13 +16,17 @@ public:
     static void initFont();
 
 private:
+    void readFile(const std::string &_path);
+    void writeFile(const std::string &_path);
+
+private:
     bool isEncoding_{};
     bool isDecoding_{};
 
 private:
     Base91 base91;
-    Logger logger_;
 
+    std::shared_ptr<spdlog::async_logger> logger_;
     ImGui::FileBrowser fileDialog_;
 };
 

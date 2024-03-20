@@ -5,9 +5,11 @@ set(CMAKE_CXX_STANDARD 17)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/misconceptions/cmake-modules)
 
+
 find_package(glfw3 REQUIRED)
 find_package(imgui REQUIRED)
 find_package(fmt REQUIRED)
+
 
 add_subdirectory(thirdparty/base91/cpp/lib)
 add_subdirectory(thirdparty/spdlog)
@@ -23,6 +25,8 @@ set(SRC
 include_directories(include)
 
 add_executable(imgui_base91 ${SRC} include/imgui_common.h)
+
+target_include_directories(${PROJECT_NAME} PUBLIC thirdparty/base91/cpp/lib)
 
 target_link_libraries(${PROJECT_NAME}
         GL
