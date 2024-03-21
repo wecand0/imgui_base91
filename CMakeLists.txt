@@ -37,7 +37,7 @@ target_link_libraries(${PROJECT_NAME}
         fmt::fmt
 )
 
-#copy all files from data folder(glyphs, sprites, style.json and etc)
+#copy all files from data folder(fonts, pics and etc)
 function(copy_recursive SOURCE_PATH DESTINATION_PATH REGEX)
     file(GLOB_RECURSE
             FILES
