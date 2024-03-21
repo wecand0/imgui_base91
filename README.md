@@ -1,5 +1,5 @@
 # imgui_base91
-Imgui project for encoding/decoding base91, save to clipboard/file
+Imgui glfw project for encoding/decoding base91, save to clipboard/file
 
 
 ![Alt text](data/1.png?raw=true)
