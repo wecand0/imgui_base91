@@ -2,6 +2,8 @@ project(imgui VERSION 1.90.4)
 
 set(CMAKE_CXX_STANDARD 17)
 
+find_package(glfw3 CONFIG REQUIRED)
+
 set(_imgui_Sources
         imconfig.h
         imgui.cpp
@@ -33,3 +35,5 @@ set(_imgui_Sources
 add_library(imgui STATIC ${_imgui_Sources})
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/stb)
+target_link_libraries(${PROJECT_NAME} PUBLIC
+        glfw)
